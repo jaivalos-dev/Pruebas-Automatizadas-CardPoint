@@ -167,7 +167,7 @@ public class pruebas {
 
             // Ajustar zoom de la página
             JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
-            jsExecutor.executeScript("document.body.style.zoom='10%'");
+            jsExecutor.executeScript("document.body.style.zoom='100%'");
 
             // Buscar el anchor y desplazarme hacia él
             WebElement anchor = driver.findElement(By.xpath("/html/body/div[1]/div/div/div/article/div/div/div/div/div/div[2]/div[2]/div/div/div/form/div[3]/a"));
@@ -185,7 +185,7 @@ public class pruebas {
 
             if (actualUrl.equals(expectedUrl)) {
                 System.out.println("La redirección fue exitosa. URL actual: " + actualUrl);
-                test.log(Status.INFO, "La redirección fue exitosa. URL actual: " + actualUrl);
+                test.log(Status.PASS, "La redirección fue exitosa. URL actual: " + actualUrl);
 
             } else {
                 System.out.println("La redirección falló. URL actual: " + actualUrl);
@@ -204,7 +204,7 @@ public class pruebas {
     // Se ejecuta después de cada prueba
     @AfterMethod
     public void tearDown() {
-        driver.quit();
+        //driver.quit();
     }
 
     // Se ejecuta al finalizar la suite de pruebas
