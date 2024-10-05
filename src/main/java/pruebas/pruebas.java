@@ -9,6 +9,7 @@ import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
+import org.openqa.selenium.JavascriptExecutor;
 
 public class pruebas {
 
@@ -79,10 +80,10 @@ public class pruebas {
         driver.get(urlRegistro);
         driver.manage().window().maximize();
 
-        String username = "userA";
+        String username = "userB";
         String nombre = "Javier Alejandro";
         String apellidos = "Avalos Galindo";
-        String correo = "mail1@gmail.com";
+        String correo = "mail2@gmail.com";
         String password = "Test123.";
 
         WebElement usernameInput = driver.findElement(By.id("user_login-193"));
@@ -149,8 +150,53 @@ public class pruebas {
             System.out.println("El mensaje de error está presente.");
             test.log(Status.FAIL, "El mensaje de error está presente. El login falló.");
         } else {
-            System.out.println("Login correcto");
+            System.out.println("Login correcto con el usuario: " + username);
             test.log(Status.PASS, "Login correcto");
+        }
+
+    }
+
+    @Test(priority = 4)
+    public void OlvidePass() throws InterruptedException {
+
+        try {
+            test = extent.createTest("Olvidé Contraseña");
+
+            driver.get(urlInicio);
+            driver.manage().window().maximize();
+
+            // Ajustar zoom de la página
+            JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
+            jsExecutor.executeScript("document.body.style.zoom='10%'");
+
+            // Buscar el anchor y desplazarme hacia él
+            WebElement anchor = driver.findElement(By.xpath("/html/body/div[1]/div/div/div/article/div/div/div/div/div/div[2]/div[2]/div/div/div/form/div[3]/a"));
+            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", anchor);
+
+            // Presionar el anchor
+            anchor.click();
+
+            // Espera de 5 segundos
+            Thread.sleep(5000);
+
+            // Validar la URL actual con la URL esperada
+            String expectedUrl = "https://compiladores.demo.gt/password-reset/";
+            String actualUrl = driver.getCurrentUrl();
+
+            if (actualUrl.equals(expectedUrl)) {
+                System.out.println("La redirección fue exitosa. URL actual: " + actualUrl);
+                test.log(Status.INFO, "La redirección fue exitosa. URL actual: " + actualUrl);
+
+            } else {
+                System.out.println("La redirección falló. URL actual: " + actualUrl);
+                test.log(Status.FAIL, "La redirección falló. URL actual: " + actualUrl);
+            }
+
+        } catch (Exception e) {
+            // Registrar la excepción
+            System.out.println("Se produjo un error: " + e.getMessage());
+            test.log(Status.FAIL, "Error al momento de ejecutar la prueba.");
+            test.log(Status.WARNING, "Se produjo un error: " + e.getMessage());
         }
 
     }
