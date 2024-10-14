@@ -11,6 +11,14 @@ import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import org.openqa.selenium.JavascriptExecutor;
 
+import javax.mail.*;
+import javax.mail.search.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Properties;
+import javax.mail.Flags.Flag;
+
+
 public class pruebas {
 
     private String urlInicio = "https://compiladores.demo.gt/login/?redirect_to=https%3A%2F%2Fcompiladores.demo.gt%2F";
@@ -21,6 +29,10 @@ public class pruebas {
     ExtentReports extent;
     ExtentSparkReporter spark;
     ExtentTest test;
+
+    // usuario y mail para registro y olvidé pass
+    String username = "Jaivalos";
+    String correo = "mail10@mail.com";
 
     // Se ejecuta al iniciar la suite
     @BeforeSuite
@@ -80,10 +92,8 @@ public class pruebas {
         driver.get(urlRegistro);
         driver.manage().window().maximize();
 
-        String username = "userB";
         String nombre = "Javier Alejandro";
         String apellidos = "Avalos Galindo";
-        String correo = "mail2@gmail.com";
         String password = "Test123.";
 
         WebElement usernameInput = driver.findElement(By.id("user_login-193"));
@@ -176,16 +186,31 @@ public class pruebas {
             // Presionar el anchor
             anchor.click();
 
-            // Espera de 5 segundos
-            Thread.sleep(5000);
-
             // Validar la URL actual con la URL esperada
             String expectedUrl = "https://compiladores.demo.gt/password-reset/";
             String actualUrl = driver.getCurrentUrl();
 
             if (actualUrl.equals(expectedUrl)) {
                 System.out.println("La redirección fue exitosa. URL actual: " + actualUrl);
-                test.log(Status.PASS, "La redirección fue exitosa. URL actual: " + actualUrl);
+                test.log(Status.INFO, "La redirección fue exitosa. URL actual: " + actualUrl);
+
+                driver.findElement(By.id("username_b")).sendKeys(username);
+                driver.findElement(By.id("um-submit-btn")).click();
+
+                // Esperar unos segundos para que el correo sea enviado
+                Thread.sleep(10000);
+                ValidarCorreo validar = new ValidarCorreo("javalos18j2@gmail.com", "lwkf unss udkh kcam", "reset your password");
+
+                correo = validar.validarCorreo();
+
+                //Verificar que el correo se haya enviado
+                if (correo.equals("Correo no encontrado")) {
+                    System.out.println("El correo no se ha encontrado");
+                    test.log(Status.FAIL, "El correo no se ha encontrado");
+                } else {
+                    System.out.println(correo);
+                    test.log(Status.PASS, "Se encontró el correo: " + correo);
+                }
 
             } else {
                 System.out.println("La redirección falló. URL actual: " + actualUrl);
@@ -201,10 +226,11 @@ public class pruebas {
 
     }
 
+
     // Se ejecuta después de cada prueba
     @AfterMethod
     public void tearDown() {
-        //driver.quit();
+        driver.quit();
     }
 
     // Se ejecuta al finalizar la suite de pruebas
@@ -212,6 +238,5 @@ public class pruebas {
     public void tearDownReport() {
         extent.flush();
     }
-
 
 }
